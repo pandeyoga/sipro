@@ -73,7 +73,7 @@ async def _buyer_and_payment(org: str, unit: dict, name: str, phone: str,
             "status": "completed", "price": int(unit.get("price") or 0),
             "booking_fee": 5_000_000,
             "reserved_at": ts, "reserved_until": ts, "booked_at": ts,
-            "notes": ("DEMO Fase 50 — rumah lunas untuk mencoba serah terima (BAST) & masa "
+            "notes": ("Data DEMO — rumah lunas untuk mencoba serah terima (BAST) & masa "
                       "garansi."),
             "demo_batch": BATCH, "demo_marker": marker,
             "created_by": "seed", "created_at": ts, "updated_at": ts}
@@ -106,7 +106,7 @@ async def _buyer_and_payment(org: str, unit: dict, name: str, phone: str,
         # Pelunasan memakai jalur resmi (jurnal kas & piutang ikut terbentuk) supaya
         # subledger tetap tie-out dengan buku besar.
         await fe.apply_receipt(deal["id"], int(inv["outstanding"]), "transfer",
-                               "Pelunasan DEMO Fase 50 (rumah siap serah terima)",
+                               "Pelunasan (data demo) — rumah siap serah terima",
                                "seed", org)
     await db.ar_invoices.update_one({"org_id": org, "deal_id": deal["id"]},
                                     {"$set": {"demo_batch": BATCH, "demo_marker": marker}})
@@ -224,7 +224,7 @@ async def _handed_over_unit(org: str, taken: set) -> dict:
         handover = await ho.issue(
             org, unit["id"], "seed", handed_over_at=day,
             received_by="Bapak Hendra Demo",
-            note=("Data DEMO Fase 50 — rumah diserahkan 400 hari lalu supaya masa garansi "
+            note=("Data DEMO — rumah diserahkan 400 hari lalu supaya masa garansi "
                   "finishing sudah lewat sementara struktur masih aktif."),
             meter_air="0148", meter_listrik="7742", keys_handed=3)
         await db.unit_handovers.update_one({"id": handover["id"], "org_id": org}, {"$set": {
@@ -236,7 +236,7 @@ async def _handed_over_unit(org: str, taken: set) -> dict:
             {"org_id": org, "demo_marker": f"{CLAIM_MARKER}_expired"}):
         expired = await we.create_claim(
             org, unit_id=unit["id"], category="finishing", title="Cat kamar mandi mengelupas",
-            description=("Data DEMO Fase 50 — keluhan masuk setelah masa garansi finishing "
+            description=("Data DEMO — keluhan masuk setelah masa garansi finishing "
                          "berakhir, supaya jawaban 'lewat masa garansi' bisa dilihat."),
             source="komplain_cs", actor="seed")
         await db.warranty_claims.update_one({"id": expired["id"], "org_id": org},
@@ -253,7 +253,7 @@ async def _handed_over_unit(org: str, taken: set) -> dict:
         active = await we.create_claim(
             org, unit_id=unit["id"], category="struktur",
             title="Retak rambut pada kolom teras",
-            description=("Data DEMO Fase 50 — klaim yang masih dalam masa garansi, sudah "
+            description=("Data DEMO — klaim yang masih dalam masa garansi, sudah "
                          "diterima dan melahirkan pekerjaan perbaikan."),
             source="portal_pembeli", actor="seed")
         await db.warranty_claims.update_one({"id": active["id"], "org_id": org},

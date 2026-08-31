@@ -31,6 +31,10 @@ Bahasa produk & komunikasi: **Indonesia**.
 - Checklist mutu pembangunan DIKONFIRMASI sudah konfigurable via Pembangunan → tab Template
   (BuildTemplateEditor: tambah/hapus poin, tandai kritis) — tidak perlu perubahan kode.
 - Testing agent iteration_115: backend 5/5 pytest, frontend 100%, data uji dibersihkan.
+- Penutup sesi lama yang terhenti: label "Fase 50/51C" DIHAPUS TUNTAS — 5 string tersisa di
+  `seed_phase50.py` (notes deal, note kwitansi pelunasan, note BAST, 2 deskripsi klaim garansi)
+  diganti "Data DEMO", dan seluruh baris DB yang sudah terlanjur ter-seed dibersihkan
+  (deals/receipts/unit_handovers/warranty_claims/punch_items/tasks) — sisa label = 0.
 - Catatan gate bawaan repo (bukan sesi ini): engine.py 817>800 baris; E5 CreateTaskDialog.
 
 ### 31 Agu 2026 (lanjutan) — combobox kaitan + tombol Buat tugas di halaman record + RBAC hide menu

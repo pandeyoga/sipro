@@ -3,14 +3,17 @@
 Checklist terstruktur + foto (via storage abstraction) + hasil/rekomendasi.
 RBAC resource `surveys` + row-scope sales (hanya survey miliknya).
 """
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+import re
 
-from db import db, ORG_ID
-from core_utils import new_id, now_iso, serialize_doc, parse_pagination
-from rbac import require_permission, scope_query, is_scoped_sales
-from engine import add_activity
-from models import SurveyCreate, SurveyUpdate, SurveyResult
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+
+import settings_store as cfg
 import storage
+from core_utils import new_id, now_iso, parse_pagination, serialize_doc
+from db import ORG_ID, db
+from engine import add_activity
+from models import SurveyCreate, SurveyResult, SurveyUpdate
+from rbac import is_scoped_sales, require_permission, scope_query
 
 router = APIRouter(prefix="/surveys", tags=["surveys"])
 
@@ -26,6 +29,26 @@ DEFAULT_CHECKLIST = [
 ]
 RESULTS = ("recommended", "needs_followup", "not_recommended")
 ITEM_STATUS = ("na", "ok", "issue")
+
+
+def _slug(label: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", label.lower()).strip("_")[:40] or "item"
+
+
+async def _default_checklist(org: str) -> list:
+    """Checklist survey dari setting `survey.checklist_items`; fallback daftar standar."""
+    labels = [str(x).strip() for x in
+              (await cfg.get("survey.checklist_items", org_id=org) or []) if str(x).strip()]
+    if not labels:
+        return [dict(c) for c in DEFAULT_CHECKLIST]
+    out, seen = [], set()
+    for lb in labels:
+        key, n = _slug(lb), 2
+        while key in seen:
+            key, n = f"{_slug(lb)}_{n}", n + 1
+        seen.add(key)
+        out.append({"key": key, "label": lb, "status": "na", "note": None})
+    return out
 
 
 async def _get_survey_scoped(survey_id: str, user: dict) -> dict:
@@ -91,7 +114,7 @@ async def create_survey(payload: SurveyCreate,
         "location": payload.location or (appt.get("location") if appt else None),
         "notes": payload.notes, "summary": None,
         "assigned_to": lead.get("assigned_to"), "status": "in_progress", "result": None,
-        "checklist": [dict(c) for c in DEFAULT_CHECKLIST], "photo_count": 0,
+        "checklist": await _default_checklist(org), "photo_count": 0,
         "created_by": user.get("email"), "created_at": ts, "updated_at": ts, "completed_at": None,
     }
     await db.surveys.insert_one(dict(survey))

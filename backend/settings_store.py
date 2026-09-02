@@ -287,6 +287,15 @@ DEFAULTS: dict = {d["key"]: d for d in [
        "Metode perhitungan target bulanan untuk proyek baru.",
        options=["linear_remaining", "s_curve", "manual", "velocity_forecast", "revenue_first"]),
     # ============ konstruksi & izin ============
+    _d("survey.checklist_items",
+       ["Akses jalan menuju lokasi", "Kondisi tanah & kontur", "Batas kavling & patok jelas",
+        "Ketersediaan listrik", "Ketersediaan air / PDAM", "Saluran drainase",
+        "Lingkungan & keamanan sekitar"],
+       "list", "lead", "Pertanyaan checklist survey lokasi",
+       "Daftar poin yang diperiksa pada setiap survey lokasi/unit BARU (pisahkan dengan "
+       "koma). Survey yang sudah dibuat tetap memakai checklist saat dibuat.",
+       impact="Mengubah daftar hanya berlaku untuk survey berikutnya — survey berjalan "
+              "tidak berubah."),
     _d("permit.block_build_without", [], "list", "konstruksi",
        "Izin yang memblokir mulai bangun",
        "Kosong = hanya peringatan. Isi kode izin (mis. PBG) untuk memblokir. Izin dicari "

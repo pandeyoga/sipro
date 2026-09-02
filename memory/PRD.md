@@ -35,6 +35,11 @@ Bahasa produk & komunikasi: **Indonesia**.
   `seed_phase50.py` (notes deal, note kwitansi pelunasan, note BAST, 2 deskripsi klaim garansi)
   diganti "Data DEMO", dan seluruh baris DB yang sudah terlanjur ter-seed dibersihkan
   (deals/receipts/unit_handovers/warranty_claims/punch_items/tasks) — sisa label = 0.
+- **Checklist survey konfigurable**: setting baru `survey.checklist_items` (list, grup
+  Lead & Lifecycle, bawaan = 7 poin standar) diedit dari Pusat Konfigurasi (/config);
+  `survey_router.create_survey` membangun checklist dari setting (`_default_checklist`,
+  key di-slug dari label). Survey berjalan memakai salinan saat dibuat. Diverifikasi curl:
+  setting kustom → survey baru memuat poin kustom → reset ke bawaan.
 - Catatan gate bawaan repo (bukan sesi ini): engine.py 817>800 baris; E5 CreateTaskDialog.
 
 ### 31 Agu 2026 (lanjutan) — combobox kaitan + tombol Buat tugas di halaman record + RBAC hide menu
